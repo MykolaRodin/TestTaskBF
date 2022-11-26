@@ -5,7 +5,7 @@ import "sort"
 // sortWords sorts a bunch of words by the number of character “a”s within
 // the word (decreasing order). If some words contain the same amount of
 // character “a”s then it sorts those words by their lengths.
-func sortWords(input []string) []string {
+func SortWords(input []string) []string {
 	wordsMap := map[string]int{}
 
 	sort.Slice(input, func(i, j int) bool {

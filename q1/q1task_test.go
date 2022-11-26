@@ -2,7 +2,7 @@ package q1
 
 import "testing"
 
-func Test_sortWords(t *testing.T) {
+func Test_SortWords(t *testing.T) {
 	inputs := [][]string{
 		{"aaaasd", "a", "aab", "aaabcd", "ef", "cssssssd", "fdz", "kf", "zc", "lklklklklklklklkl", "l"},
 		{"aab", "aba", "aaa"},
@@ -23,7 +23,7 @@ func Test_sortWords(t *testing.T) {
 	testPosLen := len(inputs)
 	for testPos := 0; testPos < testPosLen; testPos++ {
 		given := inputs[testPos]
-		actual := sortWords(given)
+		actual := SortWords(given)
 		expected := outputs[testPos]
 
 		givenLen := len(given)
