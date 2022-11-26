@@ -2,7 +2,7 @@ package q3
 
 import "testing"
 
-func Test_SortWords(t *testing.T) {
+func Test_GetMostRepeatedString(t *testing.T) {
 	testCases := []struct {
 		given    []string
 		expected string
