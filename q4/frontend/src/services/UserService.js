@@ -8,12 +8,12 @@ class UserService {
         return axios.get(USER_API_BASE_URL);
     }
 
-    createUser(user){
-        return axios.post(USER_API_BASE_URL, user);
-    }
-
     getUserById(userId){
         return axios.get(USER_API_BASE_URL + '/' + userId);
+    }
+
+    createUser(user){
+        return axios.post(USER_API_BASE_URL, user);
     }
 
     updateUser(user, userId){

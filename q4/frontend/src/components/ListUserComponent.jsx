@@ -1,96 +1,96 @@
 import React, { Component } from 'react'
+import { DataGrid } from '@mui/x-data-grid';
 import UserService from '../services/UserService'
+
+const columns = [
+    { field: 'firstName', headerName: 'First Name', width: 150 },
+    { field: 'lastName', headerName: 'Last Name', width: 150 },
+    { field: 'email', headerName: 'email', width: 150 },
+];
 
 class ListUserComponent extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
-                users: []
+            users: [],
+            selectedUserId: '',
+            type: this.props.match.params.type,
+            id: this.props.match.params.id
         }
         this.addUser = this.addUser.bind(this);
         this.editUser = this.editUser.bind(this);
         this.deleteUser = this.deleteUser.bind(this);
+
+        // If the user list is displayed after deleting a user, do not request all users from database again.
+        // Just delete the deleted used from this.state.users
+        if (this.state.type === 'delete') {
+            this.setState({users: this.state.users.filter(user => user.id !== this.state.id)});
+        }
     }
 
-    deleteUser(id){
-        UserService.deleteUser(id).then( res => {
-            this.setState({users:
-                this.state.users.
-                filter(user => user.id !== id)});
-        });
+    addUser(){
+        this.props.history.push(`/action/add/0`);
     }
-    viewUser(id){
-        this.props.history.push(`/view-user/${id}`);
+
+    editUser(){
+        this.props.history.push(`/action/edit/${this.state.selectedUserId}`);
     }
-    editUser(id){
-        this.props.history.push(`/add-user/${id}`);
+
+    deleteUser(){
+        this.props.history.push(`/action/delete/${this.state.selectedUserId}`);
     }
 
     componentDidMount(){
         UserService.getUsers().then((res) => {
-            if(res.data==null)
-            {
-                this.props.history.push('/add-user/_add');
-            }
-            this.setState({ users: res.data});
+            this.setState({users: res.data || []});
         });
-    }
-
-    addUser(){
-        this.props.history.push('/add-user/_add');
     }
 
     render() {
         return (
             <div>
-                 <h2 className="text-center">
-                     Users List</h2>
-                 <div className = "row">
+                <h2 className="text-center">
+                    Users List</h2>
+                <div className = "row">
                     <button className="btn btn-primary"
-                     onClick={this.addUser}> Add User</button>
-                 </div>
-                 <br></br>
-                 <div className = "row">
-                        <table className
-                        = "table table-striped table-bordered">
-
-                            <thead>
-                                <tr>
-                                    <th> User First Name</th>
-                                    <th> User Last Name</th>
-                                    <th> User Email</th>
-                                    <th> Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    this.state.users.map(
-                                        user =>
-                                        <tr key = {user.id}>
-                                   <td> { user.firstName} </td>
-                                   <td> {user.lastName}</td>
-                                   <td> {user.email}</td>
-                                             <td>
-                      <button onClick={ () =>
-                          this.editUser(user.id)}
-                               className="btn btn-info">Update
-                                 </button>
-                       <button style={{marginLeft: "10px"}}
-                          onClick={ () => this.deleteUser(user.id)}
-                             className="btn btn-danger">Delete
-                                 </button>
-                       <button style={{marginLeft: "10px"}}
-                           onClick={ () => this.viewUser(user.id)}
-                              className="btn btn-info">View
-                                  </button>
-                                    </td>
-                                        </tr>
-                                    )
-                                }
-                            </tbody>
-                        </table>
-                 </div>
+                        onClick={this.addUser}
+                        style={{ marginLeft: "15px" }}
+                    >
+                        New
+                    </button>
+                    <button className="btn btn-info"
+                        onClick={this.editUser}
+                        style={{ marginLeft: "15px" }}
+                        disabled={!this.state.selectedUserId}
+                    >
+                        Edit
+                    </button>
+                    <button className="btn btn-danger"
+                        onClick={this.deleteUser}
+                        style={{ marginLeft: "15px" }}
+                        disabled={!this.state.selectedUserId}
+                    >
+                        Delete
+                    </button>
+                </div>
+                <br></br>
+                <div style={{ height: 300, width: '100%' }}>
+                    <DataGrid
+                        checkboxSelection={true}
+                        isRowSelectable={(params) =>
+                            this.state.selectedUserId === '' || params.id === this.state.selectedUserId
+                        }
+                        onSelectionModelChange={(selectedUserIds) => {
+                            if (selectedUserIds && selectedUserIds.length) {
+                                this.setState({selectedUserId: selectedUserIds[0]})
+                            } else {
+                                this.setState({selectedUserId: ''})
+                            }
+                        }}
+                        rows={this.state.users} columns={columns}
+                    />
+                </div>
             </div>
         )
     }
